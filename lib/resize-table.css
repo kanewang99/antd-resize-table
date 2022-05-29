@@ -1,0 +1,29 @@
+  .resize-table .react-resizable {
+      position: relative;
+      background-clip: padding-box;
+  }
+
+  .resize-table .rainbow-ant-badge-status-text {
+      font-size: 13px !important;
+  }
+
+  /* 显示拖拽手势 */
+  .resize-table .react-resizable-handle {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      width: 10px;
+      height: 100%;
+      cursor: col-resize;
+  }
+
+  .resize-table .ellipsis-text {
+      display: -webkit-box;
+      width: 100%;
+      overflow: hidden;
+      font-size: 13px;
+      white-space: break-spaces;
+      word-break: break-all;
+      -webkit-box-orient: vertical;
+  }
