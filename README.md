@@ -1,5 +1,5 @@
 ```js
-import { ResizeTable } from "@antd-resize-table";
+import { ResizeTable } from "antd-resize-table";
 import "antd-resize-table/lib/resize-table.css";
 ```
 
