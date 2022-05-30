@@ -1,2 +1,2 @@
 import { Table } from 'antd'
-export { Table }
+export default Table

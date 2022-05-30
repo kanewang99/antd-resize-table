@@ -1,13 +1,13 @@
-import { deletePx, isPercentage, toPoint } from './util';
+import { deletePx, isPercentage, toPoint, genWidth } from './util';
 import React, { useEffect, useState } from 'react';
-import { Table } from './module'
+import Table from './module.js';
 import { Resizable } from 'react-resizable';
-import './index.css'
+import { useRef } from 'react';
 
 // 调整table表头
-const ResizeableTitle = (Iprops, ref) => {
-    const { onResize, width, onClick, ...restProps } = Iprops;
-    if (!width) {
+const ResizeableTitle = (Iprops) => {
+    const { onResize, width, onClick, allowDrag = true, ...restProps } = Iprops;
+    if (!width && !allowDrag) {
         return <th {...restProps} />;
     }
     let dragging = false;
@@ -32,7 +32,8 @@ const ResizeableTitle = (Iprops, ref) => {
 
 // 拖拽调整table
 
-export const _ResizeTable = (props, ref) => {
+export const _ResizeTable = (props, _ref) => {
+    const ref = useRef(null);
     const { components: _components } = props;
     const [cols, setCols] = useState(props.columns);
     const [columns, setColumns] = useState(cols);
@@ -56,19 +57,11 @@ export const _ResizeTable = (props, ref) => {
     };
 
     const genCols = (columns) => {
-        let tableInstanceClientWidth = ref.current?.clientWidth;
+        const refs = _ref || ref;
+        const tableInstanceClientWidth = refs.current?.clientWidth;
         const re = columns.map((item, index) => {
             // 默认宽度100
-            let { width } = item;
-            if (!width) width = 100;
-            if (isPercentage(width)) {
-                // 计算百分比
-                width = tableInstanceClientWidth * toPoint(width);
-            }
-
-            // 处理 px 转换为数字
-            width = deletePx(width);
-            // 其他参数传递改变columns
+            const width = genWidth(item.width, tableInstanceClientWidth);
             return {
                 ...item,
                 width,
@@ -84,7 +77,7 @@ export const _ResizeTable = (props, ref) => {
             const mutiledCols = re.map((item) => {
                 return {
                     ...item,
-                    width: item.width * factor * 0.98,
+                    width: item.width * factor * 0.9,
                 };
             });
             return mutiledCols;
@@ -93,8 +86,15 @@ export const _ResizeTable = (props, ref) => {
     };
     // 处理拖拽
     const handleResize = (index) => {
+        const refs = _ref || ref;
+        const tableInstanceClientWidth = refs.current?.clientWidth;
         return (e, { size }) => {
-            const nextColumns = [...cols];
+            const nextColumns = [...cols] as any;
+            const { maxDragableWidth, minDragableWidth } = nextColumns[index];
+            if (maxDragableWidth && size.width > genWidth(maxDragableWidth, tableInstanceClientWidth))
+                return;
+            if (minDragableWidth && size.width < genWidth(minDragableWidth, tableInstanceClientWidth))
+                return;
             // 拖拽是调整宽度
             nextColumns[index] = {
                 ...nextColumns[index],
@@ -107,13 +107,14 @@ export const _ResizeTable = (props, ref) => {
 
     const refresh_ = () => {
         const _cols = (cols || []).map((col, index) => {
-            let { width } = col;
+            const { width } = col;
             return {
                 ...col,
                 width,
                 onHeaderCell: (column) => ({
                     width: column.width,
                     onResize: handleResize(index),
+                    ...column,
                 }),
             };
         });
@@ -132,7 +133,7 @@ export const _ResizeTable = (props, ref) => {
         const re = props.columns.map((item) => {
             const colItem = getColItem(item); //获取要改变的列
             if (!colItem) return item;
-            for (let key in item) {
+            for (const key in item) {
                 if (key === 'width') continue;
                 colItem[key] = item[key];
             }
@@ -145,19 +146,25 @@ export const _ResizeTable = (props, ref) => {
         queueMicrotask(() => {
             setCols(genCols(props.columns));
         });
+        window.addEventListener('resize', () => {
+            queueMicrotask(() => {
+                setCols(genCols(props.columns));
+            });
+        });
     }, []);
     return (
-        <div className='resize-table'>
+        <div className="resize-table">
             <Table
-                ref={ref}
+                ref={_ref || ref}
                 size="small"
                 scroll={{ x: 0 }}
                 {...props}
                 components={components}
                 columns={columns}
-            /></div>
+            />
+        </div>
     );
 };
 
+export const ResizeTable = React.forwardRef(_ResizeTable);
 
-export const ResizeTable = React.forwardRef(_ResizeTable)
