@@ -1,1 +1,1 @@
-export { Table };
+export default Table;

@@ -12,3 +12,6 @@ import 'antd-resize-table/lib/resize-table.css'
 ```
 
 使用和 antd Table 完全一致
+
+
+git:

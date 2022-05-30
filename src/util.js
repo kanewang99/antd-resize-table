@@ -19,3 +19,18 @@ export const deletePx = (str) => {
     if (isNumber(str?.replace('px', ''))) return Number(str?.replace('px', ''));
     return Number(str);
 };
+
+
+
+export const genWidth = (width, tableInstanceClientWidth) => {
+    if (!width) width = 100;
+    if (isPercentage(width)) {
+        // 计算百分比
+        width = tableInstanceClientWidth * toPoint(width);
+    }
+
+    // 处理 px 转换为数字
+    width = deletePx(width);
+    // 其他参数传递改变columns
+    return width;
+};
