@@ -1,6 +1,6 @@
 ```js
-import { ResizeTable } from "@alipay/antd-resize-table";
-import "@alipay/antd-resize-table/lib/resize-table.css";
+import { ResizeTable } from "@antd-resize-table";
+import "antd-resize-table/lib/resize-table.css";
 ```
 
 ```jsx
