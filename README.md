@@ -1,15 +1,14 @@
-# 0.1.4
 
-import { createResizeTable } from 'antd-resize-table'
-import { Table } from 'antd';
-const ResizeTable = createResizeTable(Table)
+```js
+import { ResizeTable } from 'antd-resize-table'
+import 'antd-resize-table/lib/resize-table.css'
+```
 
+```jsx
  <ResizeTable
     dataSource={[]}
     columns={[]}
 />
+```
 
-直接使用即可
-
-# 0.1.4
-打包jsx，css
+使用和 antd Table 完全一致

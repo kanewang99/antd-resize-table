@@ -1,11 +1,11 @@
 import { deletePx, isPercentage, toPoint } from './util';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from './module'
 import { Resizable } from 'react-resizable';
 import './index.css'
 
 // 调整table表头
-const ResizeableTitle = (Iprops) => {
+const ResizeableTitle = (Iprops, ref) => {
     const { onResize, width, onClick, ...restProps } = Iprops;
     if (!width) {
         return <th {...restProps} />;
@@ -32,9 +32,8 @@ const ResizeableTitle = (Iprops) => {
 
 // 拖拽调整table
 
-export const ResizeTable = (props) => {
-    const { ref, components: _components } = props;
-    let tableRef = useRef(null);
+export const _ResizeTable = (props, ref) => {
+    const { components: _components } = props;
     const [cols, setCols] = useState(props.columns);
     const [columns, setColumns] = useState(cols);
     // 定义头部组件
@@ -44,14 +43,6 @@ export const ResizeTable = (props) => {
             cell: ResizeableTitle,
         },
         ..._components,
-    };
-
-    const resizeCell = (text, key) => {
-        return (
-            <span key={key} className={'ellipsis-text'} style={{ width: '100%' }}>
-                {text}
-            </span>
-        );
     };
 
     const getColItem = (_item) => {
@@ -65,13 +56,7 @@ export const ResizeTable = (props) => {
     };
 
     const genCols = (columns) => {
-        let tableInstanceClientWidth;
-        if (ref) {
-            tableInstanceClientWidth = ref.current?.clientWidth;
-        } else {
-            tableInstanceClientWidth = tableRef.current?.clientWidth;
-        }
-
+        let tableInstanceClientWidth = ref.current?.clientWidth;
         const re = columns.map((item, index) => {
             // 默认宽度100
             let { width } = item;
@@ -84,7 +69,6 @@ export const ResizeTable = (props) => {
             // 处理 px 转换为数字
             width = deletePx(width);
             // 其他参数传递改变columns
-
             return {
                 ...item,
                 width,
@@ -100,7 +84,7 @@ export const ResizeTable = (props) => {
             const mutiledCols = re.map((item) => {
                 return {
                     ...item,
-                    width: item.width * factor * 0.9,
+                    width: item.width * factor * 0.98,
                 };
             });
             return mutiledCols;
@@ -121,7 +105,7 @@ export const ResizeTable = (props) => {
         };
     };
 
-    const refreshResizeTable = () => {
+    const refresh_ = () => {
         const _cols = (cols || []).map((col, index) => {
             let { width } = col;
             return {
@@ -131,19 +115,13 @@ export const ResizeTable = (props) => {
                     width: column.width,
                     onResize: handleResize(index),
                 }),
-                // eslint-disable-next-line no-nested-ternary
-                render: col.render
-                    ? (...args) => {
-                        return <div className="ellipsis-text">{col.render(...args)}</div>;
-                    }
-                    : (text) => resizeCell(text, col.key)
             };
         });
         setColumns(_cols);
     };
 
     useEffect(() => {
-        refreshResizeTable();
+        refresh_();
     }, [cols]);
 
     useEffect(() => {
@@ -171,10 +149,9 @@ export const ResizeTable = (props) => {
     return (
         <div className='resize-table'>
             <Table
-                ref={ref || tableRef}
+                ref={ref}
                 size="small"
                 scroll={{ x: 0 }}
-                tableKey='key'
                 {...props}
                 components={components}
                 columns={columns}
@@ -183,3 +160,4 @@ export const ResizeTable = (props) => {
 };
 
 
+export const ResizeTable = React.forwardRef(_ResizeTable)
