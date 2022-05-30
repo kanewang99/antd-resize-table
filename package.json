@@ -1,6 +1,6 @@
 {
 	"name": "antd-resize-table",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"private": false,
 	"dependencies": {
 		"react-resizable": "^3.0.4",
