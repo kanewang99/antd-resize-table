@@ -1,7 +1,10 @@
 import babel from "rollup-plugin-babel";
-import css from 'rollup-plugin-css-only'
 import typescript from "rollup-plugin-typescript2";
 import cjs from 'rollup-plugin-commonjs'
+import postcss from 'rollup-plugin-postcss'
+
+
+
 export default [
     {
         input: './src/index.tsx',
@@ -13,8 +16,10 @@ export default [
         plugins: [
             typescript({ noEmitHelpers: true }),
             babel(),
-            css({ output: 'resize-table.css' }),
-            cjs()
+            cjs(),
+            postcss({
+                plugins: []
+            })
         ]
     }
 ];
