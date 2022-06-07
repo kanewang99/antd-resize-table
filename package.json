@@ -1,6 +1,6 @@
 {
 	"name": "antd-resize-table",
-	"version": "0.2.39",
+	"version": "0.2.42",
 	"private": false,
 	"dependencies": {
 		"postcss": "^8.4.14",
