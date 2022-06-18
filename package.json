@@ -1,10 +1,11 @@
 {
-	"name": "antd-resize-table",
-	"version": "0.2.42",
+	"name": "resize-table",
+	"version": "0.2.44",
 	"private": false,
 	"dependencies": {
 		"postcss": "^8.4.14",
 		"react-resizable": "^3.0.4",
+		"resize-table": "^0.2.44",
 		"rollup-plugin-commonjs": "^10.1.0",
 		"rollup-plugin-postcss": "^4.0.2",
 		"rollup-plugin-typescript2": "^0.31.2"
