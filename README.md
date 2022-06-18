@@ -1,6 +1,5 @@
 ```js
 import { ResizeTable } from "antd-resize-table";
-import "antd-resize-table/lib/resize-table.css";
 ```
 
 ```jsx
@@ -15,20 +14,18 @@ const columns = [
         minDragableWidth: 100 //  100 ｜ '100' ｜ '15%' //最小可拖拽宽度
     }
 ]
-<ResizeTable dataSource={[{key1:'key1'}]} columns={columns} />
+
+<ResizeTable
+    defaultMinDragWidth={100}
+    enableWidthAsDefaultDragWidht={true}
+    dataSource={[{key1:'key1'}]}
+    columns={columns}
+    autoExpand={true}
+/>
 ```
 
+// defaultMinDragWidth: 50 // number 默认为 50 最小可拖拽宽度
+// enableWidthAsDefaultDragWidth : boolean 默认为 false 将最小可拖拽宽度设置与 width 一致
+优先级大于 defaultMinDragWidth 小于 minDragableWidth
 其他 Api 使用和 antd Table 完全一致
-
-#### notice：
-
-1. 表格的 tableLayout 固定为 fixed
-2. 表格最后一列固定且 fixed 为 right
-3. 表格有默认的 scroll={x:0} 强制内容超过滚动
-
-#### 表格列宽计算规则：
-
-1. antd 每个列的宽度只存在最小宽度，如果所有列的宽度相加为小于表格的实际宽度，每次拖动包括首次渲染 antd 都会重新计算其宽度。
-   每列宽实际为其平均值，如果最小宽度大于平均值则取最小值。
-2. 在上一条规则之上。当首次渲染所有表格列宽度相加小于表格的实际宽度时，antd-resize-table 会重写 columns 中每一列的 width 属性，columns 总宽度将略小于实际宽度。拖动后 antd 将不会重新计算其宽度
-3. 当首次渲染所有表格列宽度相加大于表格的实际宽度时，最后一列将固定在最右侧（fixed：right）。
+// autoExpand 默认为false 当列宽之和大于table实际宽度时时候允许滚动，初始总列宽大于实际宽度时值为true

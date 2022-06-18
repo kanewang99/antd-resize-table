@@ -21,7 +21,6 @@ export const deletePx = (str) => {
 };
 
 
-
 export const genWidth = (width, tableInstanceClientWidth) => {
     if (!width) width = 100;
     if (isPercentage(width)) {
@@ -33,4 +32,13 @@ export const genWidth = (width, tableInstanceClientWidth) => {
     width = deletePx(width);
     // 其他参数传递改变columns
     return width;
+};
+
+export const getTotalWidth = (cols, tableInstanceClientWidth) => {
+    const totalWidht = cols.reduce((pre, cur) => {
+        return pre + cur.width;
+    }, 0);
+
+    const factor = tableInstanceClientWidth / totalWidht;
+    return totalWidht * factor;
 };

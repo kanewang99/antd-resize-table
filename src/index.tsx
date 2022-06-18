@@ -1,13 +1,13 @@
-import { deletePx, isPercentage, toPoint, genWidth } from './util';
+import { genWidth, getTotalWidth } from './util';
 import React, { useEffect, useState } from 'react';
 import Table from './module.js';
 import { Resizable } from 'react-resizable';
 import { useRef } from 'react';
-
+import './index.css'
 // 调整table表头
 const ResizeableTitle = (Iprops) => {
     const { onResize, width, onClick, allowDrag = true, ...restProps } = Iprops;
-    if (!width && !allowDrag) {
+    if (!width || !allowDrag) {
         return <th {...restProps} />;
     }
     let dragging = false;
@@ -20,6 +20,7 @@ const ResizeableTitle = (Iprops) => {
             onResizeStop={() => {
                 dragging = true;
             }}
+            // @ts-ignore
             onClick={(...args) => {
                 if (!dragging && onClick) onClick(args);
                 dragging = false;
@@ -34,7 +35,12 @@ const ResizeableTitle = (Iprops) => {
 
 export const _ResizeTable = (props, _ref) => {
     const ref = useRef(null);
-    const { components: _components } = props;
+    const {
+        components: _components,
+        defaultMinDragWidth = 50,
+        enableWidthAsDefaultDragWidth = false,
+        autoExpand
+    } = props;
     const [cols, setCols] = useState(props.columns);
     const [columns, setColumns] = useState(cols);
     // 定义头部组件
@@ -65,7 +71,12 @@ export const _ResizeTable = (props, _ref) => {
             return {
                 ...item,
                 width,
-                fixed: index === columns?.length - 1 ? 'right' : '',
+                // eslint-disable-next-line no-nested-ternary
+                minDragableWidth: item.minDragableWidth
+                    ? item.minDragableWidth
+                    : enableWidthAsDefaultDragWidth
+                        ? item.width
+                        : defaultMinDragWidth,
             };
         });
         const totalWidht = re.reduce((pre, cur) => {
@@ -77,7 +88,8 @@ export const _ResizeTable = (props, _ref) => {
             const mutiledCols = re.map((item) => {
                 return {
                     ...item,
-                    width: item.width * factor * 0.9,
+                    minWidth: item.width,
+                    width: item.width * factor * 0.95,
                 };
             });
             return mutiledCols;
@@ -88,20 +100,70 @@ export const _ResizeTable = (props, _ref) => {
     const handleResize = (index) => {
         const refs = _ref || ref;
         const tableInstanceClientWidth = refs.current?.clientWidth;
+
         return (e, { size }) => {
-            const nextColumns = [...cols] as any;
-            const { maxDragableWidth, minDragableWidth } = nextColumns[index];
-            if (maxDragableWidth && size.width > genWidth(maxDragableWidth, tableInstanceClientWidth))
+            const Columns = [...cols] as any;
+            const currentColumns = Columns[index];
+            const nextColumns = Columns[index + 1];
+            const lostWidth = size.width - currentColumns.width;
+
+            const totalWidth = getTotalWidth(Columns, tableInstanceClientWidth);
+            if (!nextColumns) {
+                Columns.map((item) => {
+                    item.width += lostWidth / Columns.length;
+                });
+                setCols(Columns);
+                e.stopPropagation();
                 return;
-            if (minDragableWidth && size.width < genWidth(minDragableWidth, tableInstanceClientWidth))
-                return;
-            // 拖拽是调整宽度
-            nextColumns[index] = {
-                ...nextColumns[index],
-                width: size.width,
-            };
-            setCols(nextColumns);
+            }
+            if (lostWidth <= 0 && currentColumns) {
+                let idx = index;
+                let cur = currentColumns;
+                while (cur) {
+                    if (cur.minDragableWidth && cur.width > cur.minDragableWidth) {
+                        break;
+                    }
+                    idx--;
+                    cur = Columns[idx];
+                }
+                if (!cur) {
+                    return;
+                }
+                console.log(cur.width, cur.minDragableWidth);
+                if (cur.width >= cur.minDragableWidth) {
+                    nextColumns.width -= lostWidth;
+                    cur.width += lostWidth;
+                }
+            } else {
+                let idx = index;
+                let cur = nextColumns;
+
+                while (cur) {
+                    if (cur.minDragableWidth && cur.width > cur.minDragableWidth) {
+                        break;
+                    }
+                    idx++;
+                    cur = Columns[idx];
+                }
+                if (!cur) {
+                    if (!autoExpand) return
+                    Columns[index] = {
+                        ...Columns[index],
+                        width: size.width,
+                    };
+                } else {
+                    console.log(cur.width, cur.minDragableWidth);
+
+                    if (cur.width >= cur.minDragableWidth) {
+                        cur.width -= lostWidth;
+                        currentColumns.width += lostWidth;
+                    }
+                }
+            }
+
+            setCols(Columns);
             e.stopPropagation();
+            console.log({ totalWidth });
         };
     };
 
@@ -167,4 +229,3 @@ export const _ResizeTable = (props, _ref) => {
 };
 
 export const ResizeTable = React.forwardRef(_ResizeTable);
-
