@@ -1,14 +1,10 @@
 {
-	"name": "resize-table",
-	"version": "0.2.44",
+	"name": "antd-resize-table",
+	"version": "0.2.52",
 	"private": false,
 	"dependencies": {
 		"postcss": "^8.4.14",
-		"react-resizable": "^3.0.4",
-		"resize-table": "^0.2.44",
-		"rollup-plugin-commonjs": "^10.1.0",
-		"rollup-plugin-postcss": "^4.0.2",
-		"rollup-plugin-typescript2": "^0.31.2"
+		"react-resizable": "^3.0.4"
 	},
 	"main": "lib/index.js",
 	"scripts": {
@@ -29,6 +25,9 @@
 		]
 	},
 	"devDependencies": {
+		"rollup-plugin-commonjs": "^10.1.0",
+		"rollup-plugin-postcss": "^4.0.2",
+		"rollup-plugin-typescript2": "^0.31.2",
 		"@babel/preset-env": "^7.18.2",
 		"@babel/preset-react": "^7.17.12",
 		"@types/react-resizable": "^3.0.0",

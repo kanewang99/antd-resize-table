@@ -12,7 +12,7 @@ const columns = [
 
 <ResizeTable
     defaultMinDragWidth={100} // defaultMinDragWidth: 50 number 默认为 50 最小可拖拽宽度 所有列都具有width时生效。
-    enableWidthAsDefaultDragWidht={true} // enableWidthAsDefaultDragWidth : boolean 默认为 false 将最小可拖拽宽度设置与 width 一致 所有列都具有width时生效。 优先级大于 defaultMinDragWidth 小于 minDragableWidth
+    enableWidthAsDefaultDragWidth={true} // enableWidthAsDefaultDragWidth : boolean 默认为 false 将最小可拖拽宽度设置与 width 一致 所有列都具有width时生效。 优先级大于 defaultMinDragWidth 小于 minDragableWidth
     dataSource={[{key1:'key1'}]}
     columns={columns} 
     autoExpand={true}  // autoExpand 默认为false 当列宽之和大于table实际宽度时允许滚动。
